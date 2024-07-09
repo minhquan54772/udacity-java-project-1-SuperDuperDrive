@@ -8,8 +8,7 @@ public class User {
     private String firstname;
     private String lastname;
 
-    public User(int userid, String username, String password, String salt, String firstname, String lastname) {
-        this.userid = userid;
+    public User(String username, String password, String salt, String firstname, String lastname) {
         this.username = username;
         this.password = password;
         this.salt = salt;
