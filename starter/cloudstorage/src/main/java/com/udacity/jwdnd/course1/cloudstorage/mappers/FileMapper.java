@@ -14,7 +14,10 @@ public interface FileMapper {
     @Select("SELECT * FROM FILES WHERE USERID = #{userId}")
     List<File> getFilesListByUserId(int userId);
 
-    @Insert("INSERT INTO FILES (FILENAME, CONTENTTYPE, FILESIZE, USERID FILEDATA) VALUES (#{filename}, #{contenttype} #{filesize} #{userid} #{filedata})")
+    @Select("SELECT * FROM FILES WHERE FILEID = #{fileid}")
+    File getFileById(int fileid);
+
+    @Insert("INSERT INTO FILES (FILENAME, CONTENTTYPE, FILESIZE, USERID, FILEDATA) VALUES (#{filename}, #{contenttype}, #{filesize}, #{userid}, #{filedata})")
     int uploadFile(File file);
 
     @Delete("DELETE FROM FILES WHERE FILEID = #{fileId}")

@@ -20,7 +20,11 @@ public class FileService {
         return this.fileMapper.getFilesListByUserId(userId);
     }
 
-    public int uploadFile(File file) {
+    public File getFilesByFileId(int fileId) {
+        return this.fileMapper.getFileById(fileId);
+    }
+
+    public int createFile(File file) {
         return this.fileMapper.uploadFile(file);
     }
 
