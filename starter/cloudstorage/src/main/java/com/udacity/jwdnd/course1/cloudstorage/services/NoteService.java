@@ -19,6 +19,10 @@ public class NoteService {
         return this.noteMapper.getNotesByUserId(userId);
     }
 
+    public Note getNoteById(int noteId) {
+        return this.noteMapper.getNoteByNoteId(noteId);
+    }
+
     public int addNote(Note note) {
         return this.noteMapper.insertNote(note);
     }
