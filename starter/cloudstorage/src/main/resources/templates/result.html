@@ -14,8 +14,8 @@
                 <h1 class="display-5" id="success">Success</h1>
                 <span>Your changes were successfully saved. Go back to <a th:href="@{/home}">home page</a>.</span>
             </div>
-            <div class="alert alert-danger fill-parent" th:if="${!success}">
-                <h1 class="display-5">Error</h1>
+            <div class="alert alert-danger fill-parent" th:unless="${success}">
+                <h1 class="display-5" id="error">Error</h1>
                 <span>Your changes were not saved. Go back to <a th:href="@{/home}">home page</a>.</span>
             </div>
             <div class="alert alert-danger fill-parent" th:each="msg: ${errors}">
