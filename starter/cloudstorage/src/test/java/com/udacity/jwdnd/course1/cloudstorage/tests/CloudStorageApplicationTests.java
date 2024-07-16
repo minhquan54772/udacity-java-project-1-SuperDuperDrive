@@ -1,5 +1,6 @@
-package com.udacity.jwdnd.course1.cloudstorage;
+package com.udacity.jwdnd.course1.cloudstorage.tests;
 
+import com.udacity.jwdnd.course1.cloudstorage.utils.CommonTestUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -13,8 +14,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 import java.io.File;
 
-import static com.udacity.jwdnd.course1.cloudstorage.utils.CommonTestUtils.doLogIn;
-import static com.udacity.jwdnd.course1.cloudstorage.utils.CommonTestUtils.doMockSignUp;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
@@ -22,21 +21,23 @@ class CloudStorageApplicationTests {
 	@LocalServerPort
 	private int port;
 
-	private WebDriver driver;
+	private static CommonTestUtils commonTestUtils;
+	private static WebDriver driver;
 
 	@BeforeAll
 	static void beforeAll() {
 		WebDriverManager.chromedriver().setup();
+		driver = new ChromeDriver();
+		commonTestUtils = new CommonTestUtils(driver);
 	}
 
 	@BeforeEach
 	public void beforeEach() {
-		this.driver = new ChromeDriver();
 	}
 
-	@AfterEach
-	public void afterEach() {
-		if (this.driver != null) {
+	@AfterAll
+	static void afterAll() {
+		if (driver != null) {
 			driver.quit();
 		}
 	}
@@ -62,7 +63,7 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testRedirection() {
 		// Create a test account
-		doMockSignUp(driver, this.port,"Redirection","Test","RT","123");
+		commonTestUtils.doMockSignUp(driver, this.port,"Redirection","Test","RT","123");
 		
 		// Check if we have been redirected to the log in page.
 		Assertions.assertEquals("http://localhost:" + this.port + "/login", driver.getCurrentUrl());
@@ -83,8 +84,8 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testBadUrl() {
 		// Create a test account
-		doMockSignUp(driver, this.port,"URL","Test","UT","123");
-		doLogIn(driver, this.port, "UT", "123");
+		commonTestUtils.doMockSignUp(driver, this.port,"URL","Test","UT","123");
+		commonTestUtils.doLogIn(driver, this.port, "UT", "123");
 		
 		// Try to access a random made-up URL.
 		driver.get("http://localhost:" + this.port + "/some-random-page");
@@ -107,8 +108,8 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testLargeUpload() {
 		// Create a test account
-		doMockSignUp(driver, this.port, "Large File","Test","LFT","123");
-		doLogIn(driver, this.port, "LFT", "123");
+		commonTestUtils.doMockSignUp(driver, this.port, "Large File","Test","LFT","123");
+		commonTestUtils.doLogIn(driver, this.port, "LFT", "123");
 
 		// Try to upload an arbitrary large file
 		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
