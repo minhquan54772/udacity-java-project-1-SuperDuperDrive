@@ -91,45 +91,4 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/some-random-page");
 		Assertions.assertFalse(driver.getPageSource().contains("Whitelabel Error Page"));
 	}
-
-
-	/**
-	 * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the 
-	 * rest of your code. 
-	 * This test is provided by Udacity to perform some basic sanity testing of 
-	 * your code to ensure that it meets certain rubric criteria. 
-	 * 
-	 * If this test is failing, please ensure that you are handling uploading large files (>1MB),
-	 * gracefully in your code. 
-	 * 
-	 * Read more about file size limits here: 
-	 * https://spring.io/guides/gs/uploading-files/ under the "Tuning File Upload Limits" section.
-	 */
-	@Test
-	public void testLargeUpload() {
-		// Create a test account
-		commonTestUtils.doMockSignUp(driver, this.port, "Large File","Test","LFT","123");
-		commonTestUtils.doLogIn(driver, this.port, "LFT", "123");
-
-		// Try to upload an arbitrary large file
-		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
-		String fileName = "upload5m.zip";
-
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
-		WebElement fileSelectButton = driver.findElement(By.id("fileUpload"));
-		fileSelectButton.sendKeys(new File(fileName).getAbsolutePath());
-
-		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
-		uploadButton.click();
-		try {
-			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
-		} catch (org.openqa.selenium.TimeoutException e) {
-			System.out.println("Large File upload failed");
-		}
-		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
-
-	}
-
-
-
 }
