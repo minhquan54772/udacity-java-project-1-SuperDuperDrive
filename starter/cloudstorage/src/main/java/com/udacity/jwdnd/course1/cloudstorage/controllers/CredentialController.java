@@ -36,13 +36,20 @@ public class CredentialController {
         int credentialId = credential.getCredentialid();
         if (credentialId >= 0) {
             // update credential
-            Credential credentialById = this.credentialService.getCredentialById(credentialId);
+            Credential credentialById = this.credentialService.getCredentialById(credentialId, userid);
 
-            credentialById.setUrl(credential.getUrl());
-            credentialById.setUsername(credential.getUsername());
-            credentialById.setPassword(this.encryptionService.encryptValue(credential.getPassword(), credentialById.getKey()));
+            if (credentialById != null) {
+                credentialById.setUrl(credential.getUrl());
+                credentialById.setUsername(credential.getUsername());
+                credentialById.setPassword(this.encryptionService.encryptValue(credential.getPassword(), credentialById.getKey()));
+                this.credentialService.updateCredential(credentialById, userid);
 
-            this.credentialService.updateCredential(credentialById);
+            } else {
+                model.addAttribute("success", false);
+                model.addAttribute("errors", List.of("Credential not found"));
+                return "result";
+            }
+
         } else {
             // create new credential
             credential.setUserid(userid);
@@ -59,9 +66,21 @@ public class CredentialController {
 
     @GetMapping("/{id}/delete")
     public String deleteCredential(@PathVariable int id, Authentication authentication, Model model) {
-        this.credentialService.deleteCredential(id);
-        model.addAttribute("success", true);
-        model.addAttribute("errors", List.of());
-        return "result";
+        String username = authentication.getName();
+        int userid = this.userService.getUserByUsername(username).getUserid();
+
+        Credential credentialById = this.credentialService.getCredentialById(id, userid);
+        if (credentialById != null) {
+            this.credentialService.deleteCredential(id, userid);
+            model.addAttribute("success", true);
+            model.addAttribute("errors", List.of());
+            return "result";
+        } else {
+            model.addAttribute("success", false);
+            model.addAttribute("errors", List.of("Credential not found"));
+            return "result";
+        }
+
+
     }
 }

@@ -14,12 +14,12 @@ public interface FileMapper {
     @Select("SELECT * FROM FILES WHERE USERID = #{userId}")
     List<File> getFilesListByUserId(int userId);
 
-    @Select("SELECT * FROM FILES WHERE FILEID = #{fileid}")
-    File getFileById(int fileid);
+    @Select("SELECT * FROM FILES WHERE FILEID = #{fileid} AND USERID = #{userId}")
+    File getFileById(int fileid, int userId);
 
     @Insert("INSERT INTO FILES (FILENAME, CONTENTTYPE, FILESIZE, USERID, FILEDATA) VALUES (#{filename}, #{contenttype}, #{filesize}, #{userid}, #{filedata})")
     int uploadFile(File file);
 
-    @Delete("DELETE FROM FILES WHERE FILEID = #{fileId}")
-    void deleteFile(int fileId);
+    @Delete("DELETE FROM FILES WHERE FILEID = #{fileId} AND USERID = #{userId}")
+    void deleteFile(int fileId, int userId);
 }

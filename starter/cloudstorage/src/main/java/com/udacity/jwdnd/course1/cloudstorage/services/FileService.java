@@ -20,15 +20,15 @@ public class FileService {
         return this.fileMapper.getFilesListByUserId(userId);
     }
 
-    public File getFilesByFileId(int fileId) {
-        return this.fileMapper.getFileById(fileId);
+    public File getFilesByFileId(int fileId, int userId) {
+        return this.fileMapper.getFileById(fileId, userId);
     }
 
     public int createFile(File file) {
         return this.fileMapper.uploadFile(file);
     }
 
-    public void deleteFileById(int fileId) {
-        this.fileMapper.deleteFile(fileId);
+    public void deleteFileById(int fileId, int userId) {
+        this.fileMapper.deleteFile(fileId, userId);
     }
 }

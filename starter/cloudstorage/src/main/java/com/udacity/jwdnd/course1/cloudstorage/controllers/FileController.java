@@ -60,32 +60,50 @@ public class FileController {
     }
 
     @GetMapping("/{id}/delete")
-    public String deleteFile(@PathVariable("id") int fileId, Model model) {
+    public String deleteFile(@PathVariable("id") int fileId, Authentication authentication, Model model) {
+        String username = authentication.getName();
+        int userid = this.userService.getUserByUsername(username).getUserid();
+
         try {
-            File filesByFileId = this.fileService.getFilesByFileId(fileId);
-            this.storageService.deleteFileOnStorage(filesByFileId);
+            File filesByFileId = this.fileService.getFilesByFileId(fileId, userid);
+            if (filesByFileId != null) {
+                // TODO: Enhance: prevent delete files of different users with same name
+                this.storageService.deleteFileOnStorage(filesByFileId);
+                this.fileService.deleteFileById(fileId, userid);
+                model.addAttribute("success", true);
+                model.addAttribute("errors", List.of());
+                return "result";
+            } else {
+                model.addAttribute("success", false);
+                model.addAttribute("errors", List.of("File not found"));
+                return "result";
+            }
         } catch (IOException e) {
             model.addAttribute("success", false);
             model.addAttribute("errors", List.of(e.getMessage()));
         }
-        this.fileService.deleteFileById(fileId);
-        model.addAttribute("success", true);
-        model.addAttribute("errors", List.of());
         return "result";
     }
 
     @GetMapping("/{id}/download")
-    public ResponseEntity<Resource> downloadFile(@PathVariable("id") int fileId, Model model) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable("id") int fileId, Authentication authentication, Model model) {
+        String username = authentication.getName();
+        int userid = this.userService.getUserByUsername(username).getUserid();
+
         try {
-            File filesByFileId = this.fileService.getFilesByFileId(fileId);
-            Resource resource = this.storageService.downloadFile(filesByFileId.getFilename());
-            if (!resource.exists() || !resource.isReadable()) {
+            File filesByFileId = this.fileService.getFilesByFileId(fileId, userid);
+            if (filesByFileId != null) {
+                Resource resource = this.storageService.downloadFile(filesByFileId.getFilename());
+                if (!resource.exists() || !resource.isReadable()) {
+                    return ResponseEntity.notFound().build();
+                }
+
+                return ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
                 return ResponseEntity.notFound().build();
             }
-
-            return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -19,19 +19,19 @@ public class NoteService {
         return this.noteMapper.getNotesByUserId(userId);
     }
 
-    public Note getNoteById(int noteId) {
-        return this.noteMapper.getNoteByNoteId(noteId);
+    public Note getNoteById(int noteId, int userId) {
+        return this.noteMapper.getNoteByNoteId(noteId, userId);
     }
 
     public int addNote(Note note) {
         return this.noteMapper.insertNote(note);
     }
 
-    public int updateNote(Note note) {
-        return this.noteMapper.updateNote(note);
+    public int updateNote(Note note, int userId) {
+        return this.noteMapper.updateNote(note, userId);
     }
 
-    public void deleteNote(int noteId) {
-        this.noteMapper.deleteNote(noteId);
+    public void deleteNote(int noteId, int userId) {
+        this.noteMapper.deleteNote(noteId, userId);
     }
 }
